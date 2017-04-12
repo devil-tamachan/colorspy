@@ -99,7 +99,7 @@ private:
         BYTE rgb[3];
         for(int i=0;i<h;i++)
         {
-          double hue = h-i;
+          double hue = /*h-*/i;
           hue/=height;
           RGBConverter::hsvToRgb(hue, 1.0, 1.0, rgb);
           nextPixel[0] = rgb[2];
@@ -188,7 +188,7 @@ private:
     {
         int size = huebarwidth*0.6;
         int x = rect.Width()+huebarwidthpadding;
-        int y = (1.0-hsv[0])*height;
+        int y = (/*1.0-*/hsv[0])*height;
 
         dc.MoveTo(x, y);
         dc.LineTo(x+size, y+size);
