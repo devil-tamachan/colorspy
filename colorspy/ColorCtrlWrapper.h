@@ -61,6 +61,18 @@ public:
   {
     return m_colorctrl.SetRGB(c);
   }
+  void SetColorSpace(int modeColorSpace)
+  {
+    m_colorctrl.SetColorSpace(modeColorSpace);
+  }
+  void SetDiffMode(int diffMode)
+  {
+    m_colorctrl.SetDiffMode(diffMode);
+  }
+  void SetDiffCOLORREF(COLORREF c)
+  {
+    m_colorctrl.SetDiffCOLORREF(c);
+  }
   CColorCtrlWrapper(void)
   {
   }

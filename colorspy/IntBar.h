@@ -15,7 +15,8 @@ public:
     END_MSG_MAP()
 
 private:
-    int m_value;
+    //int m_value;
+    double m_value2;
     DWORD m_barid;
     bool m_bCapture;
     bool m_bCanChange;
@@ -37,12 +38,12 @@ private:
       v -= rect.left;
       double width = rect.Width()-1;
       double value = v;
-      v = value / width * 255.0;
+      v = value / width;
       ATLTRACE("v: %d\n",v);
-      v=min(max(v, 0), 255);
-      if(m_value!=v)
+      v=clampDouble(v);
+      if(m_value2!=v)
       {
-        m_value = v;
+        m_value2 = v;
         ::SendMessage(GetParent(), WM_CHANGEBARVALUE, v, m_barid);
       }
       RedrawWindow();
@@ -78,8 +79,8 @@ private:
       rect.bottom -= 1;
       dc.FillSolidRect(rect, RGB(255,255,255));
       double width = rect.Width();
-      double v = m_value;
-      v /= 255.0;
+      double v = m_value2;
+      //v /= 255.0;
       v *= width;
       int l = v;
       rect.right = rect.left+l;
@@ -87,9 +88,17 @@ private:
     }
 
 public:
+  /*
     void SetIntValue(int val)
     {
       m_value = val;
+      RedrawWindow();
+      UpdateWindow();
+    }*/
+    
+    void SetDoubleValue(double v)
+    {
+      m_value2 = v;
       RedrawWindow();
       UpdateWindow();
     }
@@ -102,7 +111,7 @@ public:
     {
       m_bCanChange = bCanChange;
     }
-  CIntBar(void) : m_value(0), m_bCapture(false), m_bCanChange(false), m_barid(-1)
+  CIntBar(void) : /*m_value(0),*/ m_value2(0.0), m_bCapture(false), m_bCanChange(false), m_barid(-1)
   {
   }
   ~CIntBar(void)

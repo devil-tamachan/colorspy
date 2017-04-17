@@ -7,6 +7,9 @@
 #include "ColorCtrlWrapper.h"
 #include "ZoomView.h"
 
+extern const TCHAR* strDiffMode[];
+extern const TCHAR* strColorSpaceMode[];
+
 class CMainDlg : public CDialogImpl<CMainDlg>, public CUpdateUI<CMainDlg>,
 		public CMessageFilter, public CIdleHandler, public CWinDataExchange<CMainDlg>, public CDialogResize<CMainDlg>
 {
@@ -17,8 +20,10 @@ public:
   CColorCtrlWrapper m_color2;
   CColorCtrlWrapper m_color3;
   CZoomView m_zoomview;
+  int m_modeColorSpace; //0-HSV, 1-RGB, 2-RGB(Linear)
+  int m_modeDiff; //0-raw, 1-diff, 2-diff(%)
 
-  CMainDlg()
+  CMainDlg() : m_modeColorSpace(0), m_modeDiff(0)
   {
   }
 
@@ -50,6 +55,8 @@ public:
      DLGRESIZE_CONTROL(IDC_STATIC2, DLSZ_SIZE_Y/*|DLSZ_REPAINT*/)
      DLGRESIZE_CONTROL(IDC_STATIC3, DLSZ_SIZE_Y/*|DLSZ_REPAINT*/)
      DLGRESIZE_CONTROL(IDS_ZOOM, DLSZ_SIZE_Y/*|DLSZ_REPAINT*/)
+     DLGRESIZE_CONTROL(IDB_SWITCHCOLOR, DLSZ_MOVE_X|DLSZ_MOVE_Y/*|DLSZ_REPAINT*/)
+     DLGRESIZE_CONTROL(IDB_DIFFSWITCH, DLSZ_MOVE_X|DLSZ_MOVE_Y/*|DLSZ_REPAINT*/)
   END_DLGRESIZE_MAP()
 
 
@@ -61,8 +68,29 @@ public:
     MSG_WM_CLOSE(OnClose)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
+    COMMAND_ID_HANDLER_EX(IDB_SWITCHCOLOR, OnSwitchColor)
+    COMMAND_ID_HANDLER_EX(IDB_DIFFSWITCH, OnDiffSwitch)
     CHAIN_MSG_MAP(CDialogResize<CMainDlg>)
 	END_MSG_MAP()
+
+  void OnSwitchColor(UINT uNotifyCode, int nID, CWindow wndCtl)
+  {
+    m_modeColorSpace++;
+    if(m_modeColorSpace>2)m_modeColorSpace=0;
+    wndCtl.SetWindowText(strColorSpaceMode[m_modeColorSpace]);
+    m_color1.SetColorSpace(m_modeColorSpace);
+    m_color2.SetColorSpace(m_modeColorSpace);
+    m_color3.SetColorSpace(m_modeColorSpace);
+  }
+  void OnDiffSwitch(UINT uNotifyCode, int nID, CWindow wndCtl)
+  {
+    m_modeDiff++;
+    if(m_modeDiff>2)m_modeDiff=0;
+    wndCtl.SetWindowText(strDiffMode[m_modeDiff]);
+    //m_color1.SetDiffMode(m_bHSVMode);
+    m_color2.SetDiffMode(m_modeDiff);
+    m_color3.SetDiffMode(m_modeDiff);
+  }
 
 
   COLORREF DivideCOLORREF(COLORREF c1, COLORREF c3)
@@ -73,19 +101,19 @@ public:
     d3 = GetRValue(c3);
     if(d1==0.0)d3=0.0;
     else d3/=d1;
-    r = min(max(d3*255.0,0.0), 255.0);
+    r = clampDouble(d3*255.0, 255.0);
 
     d1 = GetGValue(c1);
     d3 = GetGValue(c3);
     if(d1==0.0)d3=0.0;
     else d3/=d1;
-    g = min(max(d3*255.0,0.0), 255.0);
+    g = clampDouble(d3*255.0, 255.0);
 
     d1 = GetBValue(c1);
     d3 = GetBValue(c3);
     if(d1==0.0)d3=0.0;
     else d3/=d1;
-    b = min(max(d3*255.0,0.0), 255.0);
+    b = clampDouble(d3*255.0, 255.0);
     return RGB(r,g,b);
   }
   
@@ -93,6 +121,9 @@ public:
   {
     ATLTRACE("OnChangeRGB\n");
     COLORREF c1 = m_color1.GetRGB();
+    ATLTRACE("  Diff: %08X\n", c1);
+    m_color2.SetDiffCOLORREF(c1);
+    m_color3.SetDiffCOLORREF(c1);
     COLORREF c3 = m_color3.GetRGB();
     m_color2.SetRGB(DivideCOLORREF(c1,c3));
     return 1;

@@ -63,14 +63,9 @@ private:
 
   void ChangeRGB()
   {
-    double hsv[3];
-    RGBConverter::rgbToHsv(GetRValue(m_color), GetGValue(m_color), GetBValue(m_color), hsv);
-    //int h = hsv[0]*255.0;
-    //int s = hsv[1]*255.0;
-    //int v = hsv[2]*255.0;
     m_hsvview1.SetRGB(m_color);
     m_col1.SetColor(m_color);
-    m_intbarCtrlSet1.SetHSV(hsv);
+    m_intbarCtrlSet1.SetCOLORREF(m_color);
     DoDataExchange(FALSE);
   }
 
@@ -108,6 +103,18 @@ public:
   {
     m_color = c;
     ChangeRGB();
+  }
+  void SetColorSpace(int modeColorSpace)
+  {
+    m_intbarCtrlSet1.SetColorSpace(modeColorSpace);
+  }
+  void SetDiffMode(int diffMode)
+  {
+    m_intbarCtrlSet1.SetDiffMode(diffMode);
+  }
+  void SetDiffCOLORREF(COLORREF c)
+  {
+    m_intbarCtrlSet1.SetDiffCOLORREF(c);
   }
 
   CColorCtrl(void):m_color(0)

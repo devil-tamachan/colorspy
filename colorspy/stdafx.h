@@ -17,6 +17,8 @@
 #include <atlbase.h>
 #include <atlapp.h>
 
+#include <atlstr.h>
+
 extern CAppModule _Module;
 
 #include <atlwin.h>
@@ -27,7 +29,12 @@ extern CAppModule _Module;
 #include <atlctrls.h>
 #include <atlctrlx.h>
 
+#include <math.h>
+
 #include "RGBConverter.h"
+
+double clampDouble(double d, double max = 1.0);
+int clampBYTE(int i);
 
 #if defined _M_IX86
   #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")

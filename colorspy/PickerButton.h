@@ -30,6 +30,7 @@ private:
 
     void OnLButtonDown(UINT nFlags, CPoint point)
     {
+      SetFocus();
       SetCapture();
       m_curOld = SetCursor(m_cur);
       m_bCapture=true;
@@ -42,7 +43,7 @@ private:
       ReleaseDC(hDesktop);
 
       SendMessage(GetParent(), WM_CHANGERGB, c, m_pickid);
-      ATLTRACE("ChangeRGB: %0x08X\n", c);
+      ATLTRACE("ChangeRGB: 0x%08X\n", c);
     }
 
   void OnMouseMove(UINT nFlags, CPoint point)

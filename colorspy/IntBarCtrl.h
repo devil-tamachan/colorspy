@@ -13,13 +13,15 @@ public:
     }
 
     CStatic m_label;
-    int m_val; //[0-255]
+    //int m_val; //[0,255] or [-255,+255]
     CIntBar m_bar;
+    WTL::CString m_edit;
     
     BEGIN_DDX_MAP(CIntBarCtrl)
       DDX_CONTROL_HANDLE(IDS_INTBAR_LABEL, m_label)
       DDX_CONTROL(IDS_INTBAR_BAR1, m_bar)
-      DDX_UINT_RANGE(IDE_INTBAR_EDIT, m_val, 0, 255)
+      //DDX_UINT_RANGE(IDE_INTBAR_EDIT, m_val, 0, 255)
+      DDX_TEXT(IDE_INTBAR_EDIT, m_edit)
     END_DDX_MAP()
 
     BEGIN_DLGRESIZE_MAP(CIntBarCtrl)
@@ -52,15 +54,62 @@ public:
       m_label.SetWindowText(label);
     }
 
-    void SetIntValue(BYTE v)
+    void SetIntValue(int v)
     {
-      m_val = v;
-      m_bar.SetIntValue(v);
+      //m_val = v;
+      m_edit.Format(_T("%d"), v);
+      double d = v;
+      d/=255.0;
+      m_bar.SetDoubleValue(d);
+      DoDataExchange(FALSE);
+    }
+    void SetDoubleValue(double v, double max = 255.0)
+    {
+      //m_val = v;
+      int i=v*max+0.5;
+      m_edit.Format(_T("%d"), i);
+      m_bar.SetDoubleValue(v);
       DoDataExchange(FALSE);
     }
 
-  CIntBarCtrl(void): m_val(0)
+    void SetIntValueDiff(int v, int diff)
+    {
+      //m_val = v;
+      double d = v;
+      d/=255.0;
+      d = clampDouble(d);
+      m_edit.Format(_T("%+d"), diff);
+      m_bar.SetDoubleValue(d);
+      DoDataExchange(FALSE);
+    }
+
+    void SetDoubleValueDiff(double v, int diff)
+    {
+      //m_val = v;
+      m_edit.Format(_T("%+d"), diff);
+      m_bar.SetDoubleValue(v);
+      DoDataExchange(FALSE);
+    }
+
+    /*void SetFloatValue(int v, float f)
+    {
+      //m_val = v;
+      m_edit.Format(_T("%f"), f);
+      m_bar.SetIntValue(v);
+      DoDataExchange(FALSE);
+    }*/
+
+    void SetStrValue(double v, ATL::CString str)
+    {
+      //m_val = v;
+      m_edit = str;
+      m_bar.SetDoubleValue(v);
+      DoDataExchange(FALSE);
+    }
+
+  CIntBarCtrl(void)//: m_val(0)
   {
+    m_edit = _T("0");
   }
 
   ~CIntBarCtrl(void)
