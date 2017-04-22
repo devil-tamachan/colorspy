@@ -8,7 +8,7 @@
 #include <atlimpl.cpp>
 #endif //(_ATL_VER < 0x0700)
 
-const TCHAR* strDiffMode[] = { _T("RAW"), _T("Diff"), _T("Diff(%)") };
+const TCHAR* strDiffMode[] = { _T("RAW"), _T("Diff"), _T("Diff(%)"), _T("%") };
 const TCHAR* strColorSpaceMode[] = { _T("HSV"), _T("RGB"), _T("RGBL") };
 
 double clampDouble(double d, double max /* = 1.0 */)

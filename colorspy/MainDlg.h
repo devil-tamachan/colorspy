@@ -21,7 +21,7 @@ public:
   CColorCtrlWrapper m_color3;
   CZoomView m_zoomview;
   int m_modeColorSpace; //0-HSV, 1-RGB, 2-RGB(Linear)
-  int m_modeDiff; //0-raw, 1-diff, 2-diff(%)
+  int m_modeDiff; //0-raw, 1-diff, 2-diff(%), 3-%
 
   CMainDlg() : m_modeColorSpace(0), m_modeDiff(0)
   {
@@ -85,7 +85,7 @@ public:
   void OnDiffSwitch(UINT uNotifyCode, int nID, CWindow wndCtl)
   {
     m_modeDiff++;
-    if(m_modeDiff>2)m_modeDiff=0;
+    if(m_modeDiff>3)m_modeDiff=0;
     wndCtl.SetWindowText(strDiffMode[m_modeDiff]);
     //m_color1.SetDiffMode(m_bHSVMode);
     m_color2.SetDiffMode(m_modeDiff);
